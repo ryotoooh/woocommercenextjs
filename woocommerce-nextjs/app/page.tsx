@@ -1,6 +1,12 @@
 import Image from 'next/image'
+import { fetchWooCommerceProducts } from "../utils/wooCommerceApi";
 
-export default function Home() {
+export default async function Home() {
+
+  const products = await getWooCommerceProducts();
+
+  console.log("--WooCommerce Products: ", products);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -110,4 +116,22 @@ export default function Home() {
       </div>
     </main>
   )
+}
+
+async function getWooCommerceProducts() {
+  const wooCommerceProducts = await fetchWooCommerceProducts().catch((error) =>
+    console.error(error)
+  );
+
+  if (!wooCommerceProducts) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      products: wooCommerceProducts.data,
+    },
+  };
 }
